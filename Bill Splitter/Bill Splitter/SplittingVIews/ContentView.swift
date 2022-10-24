@@ -9,14 +9,15 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var checkAmount = 0.0
-    @State private var numberOfPeople = 2
+    @State private var numberOfPeopleSelection = 0
+    @State private var people = []
     @State private var tipPercentage = 20
     @FocusState private var amountIsFocused: Bool
     
     let tipPercentages = [10, 15, 20, 25, 0]
     
     var totalPerPerson: Double {
-        let peopleCount = Double(numberOfPeople + 2)
+        let peopleCount = Double(numberOfPeopleSelection + 2)
         let tipSelection = Double(tipPercentage)
         
         let tipValue = checkAmount / 100 * tipSelection
@@ -30,11 +31,14 @@ struct ContentView: View {
         NavigationView {
             Form {
                 Section {
-                    TextField("Amount", value: $checkAmount, format: .currency(code: Locale.current.identifier))
-                        .keyboardType(.decimalPad)
+                    HStack {
+                        Text("Amount: ")
+                        TextField("Amount", value: $checkAmount, format: .currency(code: Locale.current.identifier))
+                            .keyboardType(.decimalPad)
                         .focused($amountIsFocused)
+                    }
                     
-                    Picker("Number of people", selection: $numberOfPeople) {
+                    Picker("Number of people", selection: $numberOfPeopleSelection) {
                         ForEach(2..<100) {
                             Text("\($0) people")
                         }
@@ -54,9 +58,11 @@ struct ContentView: View {
                 
                 Section {
                     Text(totalPerPerson, format: .currency(code: Locale.current.identifier))
+                } header: {
+                    Text("Total Per Person")
                 }
             }
-            .navigationTitle("WeSplit")
+            .navigationTitle("Bill Splitter")
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
